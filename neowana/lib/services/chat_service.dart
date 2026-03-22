@@ -66,6 +66,14 @@ class ChatService {
     _send({'type': 'report'});
   }
 
+  void sendTyping() {
+    _send({'type': 'typing'});
+  }
+
+  void sendStoppedTyping() {
+    _send({'type': 'stopped_typing'});
+  }
+
   void _send(Map<String, dynamic> data) {
     _channel?.sink.add(jsonEncode(data));
   }

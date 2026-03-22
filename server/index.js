@@ -122,6 +122,24 @@ function handleMessage(id, msg) {
         console.log('[신고]', id, '→', otherId);
       }
     });
+  } else if (msg.type === 'typing' && info.roomId) {
+    const roomClients = [...clients.entries()].filter(
+      ([_, v]) => v.roomId === info.roomId
+    );
+    roomClients.forEach(([otherId, otherInfo]) => {
+      if (otherId !== id && otherInfo.ws.readyState === 1) {
+        otherInfo.ws.send(JSON.stringify({ type: 'typing' }));
+      }
+    });
+  } else if (msg.type === 'stopped_typing' && info.roomId) {
+    const roomClients = [...clients.entries()].filter(
+      ([_, v]) => v.roomId === info.roomId
+    );
+    roomClients.forEach(([otherId, otherInfo]) => {
+      if (otherId !== id && otherInfo.ws.readyState === 1) {
+        otherInfo.ws.send(JSON.stringify({ type: 'stopped_typing' }));
+      }
+    });
   } else if (msg.type === 'chat_message' && info.roomId) {
     const roomClients = [...clients.entries()].filter(
       ([_, v]) => v.roomId === info.roomId

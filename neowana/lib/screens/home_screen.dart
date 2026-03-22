@@ -101,14 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         child: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 40),
-                  Text(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 40),
+                const Spacer(),
+                Text(
                     '너와나',
                     style: TextStyle(
                       fontSize: 48,
@@ -122,16 +121,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
+                const SizedBox(height: 8),
+                Text(
                     '랜덤 채팅',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white.withOpacity(0.9),
                     ),
                   ),
-                  const SizedBox(height: 80),
-                  if (_errorMessage != null) ...[
+                const SizedBox(height: 80),
+                if (_errorMessage != null) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 20),
@@ -145,8 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                  ],
-                  if (_isConnecting)
+                ],
+                if (_isConnecting)
                     const Column(
                       children: [
                         CircularProgressIndicator(color: Colors.white),
@@ -157,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     )
-                  else if (_isWaiting)
+                else if (_isWaiting)
                     Column(
                       children: [
                         const SizedBox(
@@ -189,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     )
-                  else
+                else
                     ElevatedButton.icon(
                       onPressed: _connectAndFindMatch,
                       icon: const Icon(Icons.chat_bubble_outline, size: 28),
@@ -211,52 +210,53 @@ class _HomeScreenState extends State<HomeScreen> {
                         shadowColor: Colors.black26,
                       ),
                     ),
-                  const Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const TermsScreen(),
-                          ),
-                        ),
-                        child: Text(
-                          '이용약관',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 13,
-                          ),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TermsScreen(),
                         ),
                       ),
-                      Text(
-                        '|',
+                      child: Text(
+                        '이용약관',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
-                          fontSize: 12,
+                          color: Colors.white.withOpacity(0.95),
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
                         ),
                       ),
-                      TextButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PrivacyScreen(),
-                          ),
-                        ),
-                        child: Text(
-                          '개인정보처리방침',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 13,
-                          ),
+                    ),
+                    Text(
+                      ' | ',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 14,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PrivacyScreen(),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
+                      child: Text(
+                        '개인정보처리방침',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.95),
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         ),

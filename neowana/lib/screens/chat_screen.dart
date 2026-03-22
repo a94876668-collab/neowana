@@ -20,6 +20,9 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<ChatMessage> _messages = [];
   final ScrollController _scrollController = ScrollController();
   bool _partnerLeft = false;
+  bool _partnerTyping = false;
+  Timer? _typingDebounce;
+  Timer? _partnerTypingHide;
   StreamSubscription? _msgSub;
 
   @override
@@ -40,6 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
         case 'partner_left':
           setState(() {
             _partnerLeft = true;
+            _partnerTyping = false;
             _messages.add(ChatMessage(
               text: msg['message']?.toString() ?? '상대방이 나갔습니다.',
               isMe: false,
@@ -47,6 +51,17 @@ class _ChatScreenState extends State<ChatScreen> {
             ));
           });
           _scrollToBottom();
+          break;
+        case 'typing':
+          _partnerTypingHide?.cancel();
+          setState(() => _partnerTyping = true);
+          _partnerTypingHide = Timer(const Duration(seconds: 3), () {
+            if (mounted) setState(() => _partnerTyping = false);
+          });
+          break;
+        case 'stopped_typing':
+          _partnerTypingHide?.cancel();
+          setState(() => _partnerTyping = false);
           break;
       }
     });
@@ -64,10 +79,24 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  void _onTextChanged(String text) {
+    _typingDebounce?.cancel();
+    if (text.isNotEmpty) {
+      widget.chatService.sendTyping();
+      _typingDebounce = Timer(const Duration(milliseconds: 1500), () {
+        widget.chatService.sendStoppedTyping();
+      });
+    } else {
+      widget.chatService.sendStoppedTyping();
+    }
+  }
+
   void _sendMessage() {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
+    _typingDebounce?.cancel();
+    widget.chatService.sendStoppedTyping();
     widget.chatService.sendMessage(text);
     setState(() {
       _messages.add(ChatMessage(text: text, isMe: true));
@@ -93,6 +122,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     _msgSub?.cancel();
+    _typingDebounce?.cancel();
+    _partnerTypingHide?.cancel();
     _messageController.dispose();
     _focusNode.dispose();
     _scrollController.dispose();
@@ -329,6 +360,21 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
+          if (_partnerTyping && !_partnerLeft)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '상대가 입력 중...',
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ),
           Container(
             padding: const EdgeInsets.all(12),
             color: Colors.white,
@@ -351,6 +397,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           vertical: 12,
                         ),
                       ),
+                      onChanged: _onTextChanged,
                       onSubmitted: (_) => _sendMessage(),
                     ),
                   ),
