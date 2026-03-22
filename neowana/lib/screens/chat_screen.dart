@@ -63,6 +63,18 @@ class _ChatScreenState extends State<ChatScreen> {
           _partnerTypingHide?.cancel();
           setState(() => _partnerTyping = false);
           break;
+        case 'message_blocked':
+          setState(() {
+            final idx = _messages.lastIndexWhere((m) => m.isMe);
+            if (idx >= 0) _messages.removeAt(idx);
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('해당 메시지는 전송할 수 없습니다.'),
+              backgroundColor: Colors.orange.shade700,
+            ),
+          );
+          break;
       }
     });
   }

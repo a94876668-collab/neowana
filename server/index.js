@@ -2,6 +2,19 @@ const express = require('express');
 const http = require('http');
 const { WebSocketServer } = require('ws');
 
+// 금지어 목록 (민감 단어 포함 시 메시지 차단)
+const FORBIDDEN_KEYWORDS = [
+  '마약', '필로폰', '얼음', '대마', '코카인', '헤로인', '각성제',
+  '밀수', '밀입국', '불법촬영', '몰카', '성매매', '성매수',
+  '보이스피싱', '사기', '해킹', '마약거래', '유통'
+];
+
+function containsForbiddenKeyword(text) {
+  if (!text || typeof text !== 'string') return false;
+  const lower = text.toLowerCase();
+  return FORBIDDEN_KEYWORDS.some(kw => lower.includes(kw.toLowerCase()));
+}
+
 const app = express();
 const server = http.createServer(app);
 
@@ -141,13 +154,23 @@ function handleMessage(id, msg) {
       }
     });
   } else if (msg.type === 'chat_message' && info.roomId) {
+    const message = msg.message || '';
+    if (containsForbiddenKeyword(message)) {
+      try {
+        info.ws.send(JSON.stringify({ type: 'message_blocked' }));
+        console.log('[차단]', id, '- 금지어 포함 메시지');
+      } catch (e) {
+        console.error('[차단 알림 실패]', e.message);
+      }
+      return;
+    }
     const roomClients = [...clients.entries()].filter(
       ([_, v]) => v.roomId === info.roomId
     );
     const payload = JSON.stringify({
       type: 'chat_message',
       userId: id,
-      message: msg.message || ''
+      message
     });
     roomClients.forEach(([otherId, otherInfo]) => {
       if (otherId !== id && otherInfo.ws.readyState === 1) {
