@@ -41,14 +41,22 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
-  <div id="loading" style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;font-family:sans-serif;background:linear-gradient(135deg,#7c4dff,#f50057);color:white;">
+  <div id="loading" style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;font-family:sans-serif;background:linear-gradient(135deg,#7c4dff,#f50057);color:white;padding:20px;text-align:center;">
     <p style="font-size:24px;font-weight:bold;">너와나</p>
-    <p style="margin-top:8px;">로딩 중...</p>
+    <p id="loading-text" style="margin-top:8px;">로딩 중...</p>
   </div>
   <script>
     window.addEventListener('flutter-first-frame', function() {
-      document.getElementById('loading').style.display = 'none';
+      var el = document.getElementById('loading');
+      if (el) el.style.display = 'none';
     });
+    setTimeout(function() {
+      var el = document.getElementById('loading');
+      var text = document.getElementById('loading-text');
+      if (el && el.style.display !== 'none' && text) {
+        text.innerHTML = '로딩이 느립니다.<br><br><button onclick="location.reload(true)" style="padding:12px 24px;font-size:16px;border:none;border-radius:8px;background:white;color:#7c4dff;cursor:pointer;">새로고침</button>';
+      }
+    }, 12000);
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
