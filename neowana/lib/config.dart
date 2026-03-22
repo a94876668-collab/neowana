@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// 서버 URL 설정
 /// - 웹(Chrome): localhost
 /// - Android 에뮬레이터: 10.0.2.2 (호스트 PC)

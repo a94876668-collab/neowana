@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:neowana/config.dart';
 import 'package:neowana/screens/home_screen.dart';
 import 'package:neowana/services/chat_service.dart';
 
@@ -123,9 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
     widget.chatService.disconnect();
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => HomeScreen(
-          chatService: ChatService(serverUrl: serverUrl),
-        ),
+        builder: (context) => HomeScreen(chatService: widget.chatService),
       ),
       (route) => false,
     );
@@ -189,9 +186,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     );
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                        builder: (context) => HomeScreen(
-                          chatService: ChatService(serverUrl: serverUrl),
-                        ),
+                        builder: (context) => HomeScreen(chatService: widget.chatService),
                       ),
                       (route) => false,
                     );
@@ -243,9 +238,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   widget.chatService.disconnect();
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (context) => HomeScreen(
-                        chatService: ChatService(serverUrl: serverUrl),
-                      ),
+                      builder: (context) => HomeScreen(chatService: widget.chatService),
                     ),
                     (route) => false,
                   );

@@ -1,0 +1,30 @@
+---
+description: 코드 변경 후 터미널 배포 명령어 안내
+globs: neowana/**/*,server/**/*
+alwaysApply: true
+---
+
+# 배포 명령어 안내 규칙
+
+너와나 프로젝트에서 **코드를 수정한 후**에는 항상 아래 터미널 명령어를 그대로 복사해서 쓸 수 있게 안내하세요.
+
+## 1. 서버 (Railway) 배포
+터미널에 **그대로** 입력:
+```
+cd C:\Users\USER-PC\Desktop\랜챗
+git add .
+git commit -m "변경 내용 설명"
+git push origin main
+```
+→ GitHub 푸시 시 Railway 자동 배포
+
+## 2. 앱 (Netlify) 배포
+터미널에 **그대로** 입력:
+```
+cd C:\Users\USER-PC\Desktop\랜챗\neowana
+flutter build web --release --base-href /
+```
+실행 후 → `C:\Users\USER-PC\Desktop\랜챗\neowana\build\web` 폴더를 Netlify 사이트에 드래그
+
+## 안내 시점
+- `neowana/` 또는 `server/` 내 파일을 수정했을 때 반드시 위 명령어 전체를 사용자에게 보여줌

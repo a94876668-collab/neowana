@@ -108,108 +108,108 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 40),
                 const Spacer(),
                 Text(
-                    '너와나',
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 10,
-                          color: Colors.black26,
-                        ),
-                      ],
-                    ),
+                  '너와나',
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 10,
+                        color: Colors.black26,
+                      ),
+                    ],
                   ),
+                ),
                 const SizedBox(height: 8),
                 Text(
-                    '랜덤 채팅',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white.withOpacity(0.9),
-                    ),
+                  '랜덤 채팅',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white.withOpacity(0.9),
                   ),
+                ),
                 const SizedBox(height: 80),
                 if (_errorMessage != null) ...[
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        _errorMessage!,
-                        style: TextStyle(color: Colors.red.shade900),
-                        textAlign: TextAlign.center,
-                      ),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade100,
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    child: Text(
+                      _errorMessage!,
+                      style: TextStyle(color: Colors.red.shade900),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ],
                 if (_isConnecting)
-                    const Column(
-                      children: [
-                        CircularProgressIndicator(color: Colors.white),
-                        SizedBox(height: 16),
-                        Text(
-                          '서버 연결 중...',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ],
-                    )
+                  const Column(
+                    children: [
+                      CircularProgressIndicator(color: Colors.white),
+                      SizedBox(height: 16),
+                      Text(
+                        '서버 연결 중...',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ],
+                  )
                 else if (_isWaiting)
-                    Column(
-                      children: [
-                        const SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: CircularProgressIndicator(color: Colors.white),
+                  Column(
+                    children: [
+                      const SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: CircularProgressIndicator(color: Colors.white),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        '상대방을 찾는 중입니다...',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
                         ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          '상대방을 찾는 중입니다...',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                      ),
+                      const SizedBox(height: 40),
+                      ElevatedButton(
+                        onPressed: _cancelMatch,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white.withOpacity(0.9),
+                          foregroundColor: Colors.deepPurple,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 12,
                           ),
                         ),
-                        const SizedBox(height: 40),
-                        ElevatedButton(
-                          onPressed: _cancelMatch,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.9),
-                            foregroundColor: Colors.deepPurple,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 12,
-                            ),
-                          ),
-                          child: const Text('취소'),
-                        ),
-                      ],
-                    )
+                        child: const Text('취소'),
+                      ),
+                    ],
+                  )
                 else
-                    ElevatedButton.icon(
-                      onPressed: _connectAndFindMatch,
-                      icon: const Icon(Icons.chat_bubble_outline, size: 28),
-                      label: const Text(
-                        '매칭 시작',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.deepPurple,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 20,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        elevation: 8,
-                        shadowColor: Colors.black26,
-                      ),
+                  ElevatedButton.icon(
+                    onPressed: _connectAndFindMatch,
+                    icon: const Icon(Icons.chat_bubble_outline, size: 28),
+                    label: const Text(
+                      '매칭 시작',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 20,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 8,
+                      shadowColor: Colors.black26,
+                    ),
+                  ),
                 const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
