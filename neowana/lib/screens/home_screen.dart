@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:neowana/screens/chat_screen.dart';
+import 'package:neowana/screens/privacy_screen.dart';
+import 'package:neowana/screens/terms_screen.dart';
 import 'package:neowana/services/chat_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -209,6 +211,50 @@ class _HomeScreenState extends State<HomeScreen> {
                         shadowColor: Colors.black26,
                       ),
                     ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TermsScreen(),
+                          ),
+                        ),
+                        child: Text(
+                          '이용약관',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '|',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.6),
+                          fontSize: 12,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PrivacyScreen(),
+                          ),
+                        ),
+                        child: Text(
+                          '개인정보처리방침',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

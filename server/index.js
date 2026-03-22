@@ -107,6 +107,15 @@ function handleMessage(id, msg) {
   } else if (msg.type === 'cancel_match') {
     waitingQueue = waitingQueue.filter(x => x !== id);
     info.ws.send(JSON.stringify({ type: 'status', message: '취소됨' }));
+  } else if (msg.type === 'report' && info.roomId) {
+    const roomClients = [...clients.entries()].filter(
+      ([_, v]) => v.roomId === info.roomId
+    );
+    roomClients.forEach(([otherId]) => {
+      if (otherId !== id) {
+        console.log('[신고]', id, '→', otherId);
+      }
+    });
   } else if (msg.type === 'chat_message' && info.roomId) {
     const roomClients = [...clients.entries()].filter(
       ([_, v]) => v.roomId === info.roomId

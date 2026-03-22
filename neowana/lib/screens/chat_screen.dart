@@ -107,6 +107,112 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.deepPurple.shade400,
         foregroundColor: Colors.white,
         actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) async {
+              if (value == 'report') {
+                final ok = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('상대방 신고'),
+                    content: const Text(
+                      '이 사용자를 신고하시겠습니까?\n신고 후 채팅이 종료됩니다.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('취소'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('신고'),
+                      ),
+                    ],
+                  ),
+                );
+                if (ok == true && mounted) {
+                  widget.chatService.reportUser();
+                  _msgSub?.cancel();
+                  widget.chatService.disconnect();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('신고해 주셔서 감사합니다.'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => HomeScreen(
+                          chatService: ChatService(serverUrl: serverUrl),
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                  }
+                }
+              } else if (value == 'exit') {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('채팅 종료'),
+                    content: const Text('채팅을 종료하시겠습니까?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('취소'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          _leaveChat();
+                        },
+                        child: const Text('종료'),
+                      ),
+                    ],
+                  ),
+                );
+              } else if (value == 'block') {
+                final ok = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('상대방 차단'),
+                    content: const Text(
+                      '이 사용자를 차단하시겠습니까?\n채팅이 종료됩니다.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('취소'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('차단'),
+                      ),
+                    ],
+                  ),
+                );
+                if (ok == true && mounted) {
+                  _msgSub?.cancel();
+                  widget.chatService.disconnect();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(
+                        chatService: ChatService(serverUrl: serverUrl),
+                      ),
+                    ),
+                    (route) => false,
+                  );
+                }
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'report', child: Text('신고')),
+              const PopupMenuItem(value: 'block', child: Text('차단')),
+              const PopupMenuDivider(),
+              const PopupMenuItem(value: 'exit', child: Text('채팅 종료')),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () {

@@ -60,6 +60,10 @@ class ChatService {
     _send({'type': 'chat_message', 'message': message});
   }
 
+  void reportUser() {
+    _send({'type': 'report'});
+  }
+
   void _send(Map<String, dynamic> data) {
     _channel?.sink.add(jsonEncode(data));
   }
