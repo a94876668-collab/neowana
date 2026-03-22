@@ -30,7 +30,7 @@ jobs:
         working-directory: neowana
 
       - name: Build web
-        run: flutter build web --release --web-renderer html
+        run: flutter build web --release
         working-directory: neowana
 
       - name: Check build output
