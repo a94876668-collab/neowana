@@ -16,6 +16,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final List<ChatMessage> _messages = [];
   final ScrollController _scrollController = ScrollController();
   bool _partnerLeft = false;
@@ -73,6 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     _messageController.clear();
     _scrollToBottom();
+    _focusNode.requestFocus();
   }
 
   void _leaveChat() {
@@ -92,6 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _msgSub?.cancel();
     _messageController.dispose();
+    _focusNode.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -335,6 +338,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       controller: _messageController,
+                      focusNode: _focusNode,
+                      autofocus: true,
                       enabled: !_partnerLeft,
                       decoration: InputDecoration(
                         hintText: '메시지를 입력하세요',
