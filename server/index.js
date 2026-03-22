@@ -23,6 +23,12 @@ wss.on('connection', (ws, req) => {
   clients.set(id, { ws, roomId: null });
   console.log('[연결]', id, '- 대기열:', waitingQueue.length);
 
+  // 연결 유지 (일부 환경에서 idle 연결 끊김 방지)
+  const pingInterval = setInterval(() => {
+    if (ws.readyState === 1) ws.ping();
+  }, 30000);
+  ws.once('close', () => clearInterval(pingInterval));
+
   ws.on('message', (data) => {
     try {
       const msg = JSON.parse(data.toString());
@@ -120,13 +126,19 @@ function handleMessage(id, msg) {
     const roomClients = [...clients.entries()].filter(
       ([_, v]) => v.roomId === info.roomId
     );
+    const payload = JSON.stringify({
+      type: 'chat_message',
+      userId: id,
+      message: msg.message || ''
+    });
     roomClients.forEach(([otherId, otherInfo]) => {
       if (otherId !== id && otherInfo.ws.readyState === 1) {
-        otherInfo.ws.send(JSON.stringify({
-          type: 'chat_message',
-          userId: id,
-          message: msg.message || ''
-        }));
+        try {
+          otherInfo.ws.send(payload);
+          console.log('[채팅]', id, '→', otherId);
+        } catch (e) {
+          console.error('[채팅 전송 실패]', otherId, e.message);
+        }
       }
     });
   }

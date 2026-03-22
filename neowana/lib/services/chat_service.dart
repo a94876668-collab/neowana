@@ -25,7 +25,9 @@ class ChatService {
       _subscription = _channel!.stream.listen(
         (data) {
           try {
-            final msg = jsonDecode(data) as Map<String, dynamic>;
+            final decoded = jsonDecode(data);
+            if (decoded is! Map<String, dynamic>) return;
+            final msg = decoded;
             if (!_messageController.isClosed) {
               _messageController.add(msg);
             }
