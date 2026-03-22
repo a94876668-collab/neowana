@@ -10,9 +10,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check structure
+        run: |
+          echo "=== 폴더 구조 ==="
+          ls -la
+          ls -la neowana/ 2>/dev/null || echo "neowana 없음"
+
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
+          flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
 
@@ -27,9 +33,15 @@ jobs:
         run: flutter build web --release --web-renderer html
         working-directory: neowana
 
+      - name: Check build output
+        run: |
+          echo "=== 빌드 결과 ==="
+          ls -la neowana/build/web/
+
       - name: Deploy to Netlify
         run: |
-          npx netlify-cli deploy --prod --dir=neowana/build/web
+          npm install -g netlify-cli
+          netlify deploy --prod --dir=neowana/build/web
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
