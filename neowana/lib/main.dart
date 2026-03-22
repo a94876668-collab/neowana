@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neowana/config.dart';
 import 'package:neowana/screens/home_screen.dart';
+import 'package:neowana/screens/maintenance_screen.dart';
 import 'package:neowana/services/chat_service.dart';
 
 void main() {
@@ -38,7 +39,7 @@ class _NeowanaAppState extends State<NeowanaApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomeScreen(chatService: _chatService),
+      home: isMaintenance ? const MaintenanceScreen() : HomeScreen(chatService: _chatService),
     );
   }
 }

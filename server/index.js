@@ -15,6 +15,8 @@ function containsForbiddenKeyword(text) {
   return FORBIDDEN_KEYWORDS.some(kw => lower.includes(kw.toLowerCase()));
 }
 
+const MAINTENANCE = process.env.MAINTENANCE === 'true';
+
 const app = express();
 const server = http.createServer(app);
 
@@ -25,13 +27,22 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => res.send('너와나 서버 실행 중'));
+app.get('/', (req, res) => {
+  if (MAINTENANCE) return res.send('점검 중입니다. 내일까지 이용 불가합니다.');
+  res.send('너와나 서버 실행 중');
+});
 
 let clientId = 0;
 const clients = new Map();
 let waitingQueue = [];
 
 wss.on('connection', (ws, req) => {
+  if (MAINTENANCE) {
+    ws.send(JSON.stringify({ type: 'error', message: '점검 중입니다. 내일까지 이용 불가합니다.' }));
+    ws.close();
+    return;
+  }
+
   const id = `user_${++clientId}_${Date.now()}`;
   clients.set(id, { ws, roomId: null });
   console.log('[연결]', id, '- 대기열:', waitingQueue.length);
