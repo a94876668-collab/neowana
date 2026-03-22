@@ -41,6 +41,18 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
-  <script src="flutter_bootstrap.js?v=2" async></script>
+  <div id="loader" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:sans-serif;background:linear-gradient(135deg,#7c4dff,#f50057);color:white;z-index:9999;">
+    <p style="font-size:24px;font-weight:bold;">너와나</p>
+    <p id="status">로딩 중...</p>
+  </div>
+  <script>
+    function hideLoader() { var e=document.getElementById('loader'); if(e)e.style.display='none'; }
+    function showError(msg) { var s=document.getElementById('status'); if(s)s.innerHTML=msg+'<br><button onclick="location.reload()" style="margin-top:12px;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">새로고침</button>'; }
+    window.addEventListener('flutter-first-frame', hideLoader);
+    window.addEventListener('error', function(e) { if(e.filename && e.filename.includes('flutter')) showError('로드 오류: '+e.message); });
+    window.addEventListener('unhandledrejection', function(e) { showError('오류: '+e.reason); });
+    setTimeout(function(){ var l=document.getElementById('loader'); if(l&&l.style.display!=='none') showError('로딩이 멈췄습니다. 새로고침 해보세요.'); }, 8000);
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
