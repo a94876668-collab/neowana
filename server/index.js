@@ -1,0 +1,130 @@
+const express = require('express');
+const http = require('http');
+const { WebSocketServer } = require('ws');
+
+const app = express();
+const server = http.createServer(app);
+
+const wss = new WebSocketServer({ server, path: '/ws' });
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
+app.get('/', (req, res) => res.send('너와나 서버 실행 중'));
+
+let clientId = 0;
+const clients = new Map();
+let waitingQueue = [];
+
+wss.on('connection', (ws, req) => {
+  const id = `user_${++clientId}_${Date.now()}`;
+  clients.set(id, { ws, roomId: null });
+  console.log('[연결]', id, '- 대기열:', waitingQueue.length);
+
+  ws.on('message', (data) => {
+    try {
+      const msg = JSON.parse(data.toString());
+      handleMessage(id, msg);
+    } catch (e) {
+      console.error('파싱 오류:', e);
+    }
+  });
+
+  ws.on('close', (code, reason) => {
+    const info = clients.get(id);
+    console.log('[연결 해제]', id, '- 사유:', code, reason?.toString());
+    if (info?.roomId) {
+      const roomClients = [...clients.entries()].filter(
+        ([_, v]) => v.roomId === info.roomId
+      );
+      roomClients.forEach(([otherId, otherInfo]) => {
+        if (otherId !== id && otherInfo.ws.readyState === 1) {
+          otherInfo.ws.send(JSON.stringify({ type: 'partner_left', message: '상대방이 나갔습니다.' }));
+        }
+        otherInfo.roomId = null;
+      });
+    }
+    waitingQueue = waitingQueue.filter(x => x !== id);
+    clients.delete(id);
+  });
+
+  ws.on('error', (err) => {
+    console.log('[오류]', id, err.message);
+  });
+});
+
+function handleMessage(id, msg) {
+  const info = clients.get(id);
+  if (!info) return;
+
+  if (msg.type === 'find_match') {
+    if (info.roomId) return;
+    if (waitingQueue.includes(id)) return;
+
+    waitingQueue.push(id);
+
+    if (waitingQueue.length >= 2) {
+      const id1 = waitingQueue.shift();
+      const id2 = waitingQueue.shift();
+
+      // 같은 연결이 중복으로 매칭되는 것 방지
+      if (id1 === id2) {
+        waitingQueue.unshift(id1);
+        console.log('[거부] 같은 연결 중복 매칭 시도');
+        return;
+      }
+
+      const roomId = `room_${Date.now()}`;
+      const c1 = clients.get(id1);
+      const c2 = clients.get(id2);
+
+      if (!c1 || !c2) {
+        if (c1) waitingQueue.unshift(id1);
+        if (c2) waitingQueue.unshift(id2);
+        return;
+      }
+      if (c1.ws.readyState !== 1 || c2.ws.readyState !== 1) {
+        waitingQueue.unshift(id1);
+        waitingQueue.unshift(id2);
+        console.log('[거부] 한쪽 연결 불안정');
+        return;
+      }
+
+      c1.roomId = roomId;
+      c2.roomId = roomId;
+
+      // 매칭 알림 전송 전 약간 대기 (연결 안정화)
+      setTimeout(() => {
+        if (c1.ws.readyState === 1) c1.ws.send(JSON.stringify({ type: 'matched' }));
+        if (c2.ws.readyState === 1) c2.ws.send(JSON.stringify({ type: 'matched' }));
+        console.log('[매칭 완료]', id1, '<->', id2);
+      }, 100);
+    } else {
+      info.ws.send(JSON.stringify({ type: 'waiting' }));
+    }
+  } else if (msg.type === 'cancel_match') {
+    waitingQueue = waitingQueue.filter(x => x !== id);
+    info.ws.send(JSON.stringify({ type: 'status', message: '취소됨' }));
+  } else if (msg.type === 'chat_message' && info.roomId) {
+    const roomClients = [...clients.entries()].filter(
+      ([_, v]) => v.roomId === info.roomId
+    );
+    roomClients.forEach(([otherId, otherInfo]) => {
+      if (otherId !== id && otherInfo.ws.readyState === 1) {
+        otherInfo.ws.send(JSON.stringify({
+          type: 'chat_message',
+          userId: id,
+          message: msg.message || ''
+        }));
+      }
+    });
+  }
+}
+
+const PORT = 3000;
+server.listen(PORT, () => {
+  console.log(`\n너와나 서버: http://localhost:${PORT}`);
+  console.log('WebSocket: ws://localhost:${PORT}/ws\n');
+});

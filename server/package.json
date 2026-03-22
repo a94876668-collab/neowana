@@ -1,0 +1,13 @@
+{
+  "name": "neowana-server",
+  "version": "1.0.0",
+  "description": "랜덤 채팅 서버 - 너와나",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2"
+  }
+}

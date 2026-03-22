@@ -1,0 +1,19 @@
+# Node
+node_modules/
+
+# Flutter/Dart
+neowana/.dart_tool/
+neowana/.packages
+neowana/build/
+neowana/.flutter-plugins
+neowana/.flutter-plugins-dependencies
+neowana/pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
