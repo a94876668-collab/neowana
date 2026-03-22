@@ -12,7 +12,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.16.0'
           channel: 'stable'
           cache: true
 
@@ -24,15 +24,12 @@ jobs:
         working-directory: neowana
 
       - name: Build web
-        run: flutter build web --release
+        run: flutter build web --release --web-renderer html
         working-directory: neowana
 
       - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: 'neowana/build/web'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx netlify-cli deploy --prod --dir=neowana/build/web
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
